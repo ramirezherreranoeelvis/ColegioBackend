@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: xd
+  r2dbc:
+    url: r2dbc:mysql://localhost:3308/auth
+    username: root
+    password: "@%@?@R(0)s3!2e45b%B9Og@T(0)w(0)Nt3s@!@@?"
+server:
+  port: 8082
