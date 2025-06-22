@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/login")
 @CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*")
-public class LoginController {
+public class AuthController {
 
-      @GetMapping
+      @PostMapping
       public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
 
             if (username.isBlank()) {
@@ -34,7 +34,7 @@ public class LoginController {
       private java.util.logging.Logger logger = java.util.logging.Logger.getLogger(getClass().getName());
       private final IPersonDAO personDAO;
 
-      public LoginController(IPersonDAO personDAO) {
+      public AuthController(IPersonDAO personDAO) {
             this.personDAO = personDAO;
       }
 
