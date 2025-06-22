@@ -1,0 +1,16 @@
+spring:
+    application:
+        name: colegio
+    datasource:
+        username: root
+        url: jdbc:mysql://localhost:3308/monolito
+        password: "@%@?@R(0)s3!2e45b%B9Og@T(0)w(0)Nt3s@!@@?"
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MySQLDialect
+        hibernate:
+            ddl-auto: update
+            naming:
+                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
