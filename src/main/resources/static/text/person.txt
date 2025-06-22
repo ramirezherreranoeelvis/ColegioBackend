@@ -1,0 +1,201 @@
+@Setter
+@Getter
+@Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "access", indexes = {
+        @Index(name = "idx_username_password", columnList = "username, password")
+})
+public class Access {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idAccess;
+
+        @Column(name = "access", nullable = false)
+        private boolean accessEnabled;
+
+        @Column(name = "username", nullable = false, unique = true, updatable = true, length = 20)
+        private String username;
+
+        @Column(name = "password", nullable = false, length = 20)
+        private String password;
+
+        @Column(name = "description", length = 150)
+        private String description;
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("assistant")
+public class Assistant extends Person {
+
+        @Builder
+        public Assistant(int idPerson, Integer dni, String name, String surnamePaternal, String surnameMaternal, int phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("director")
+public class Director extends Person {
+
+        @Builder
+        public Director(int idPerson, Integer dni, String name, String surnamePaternal, String surnameMaternal, int phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("father")
+public class Father extends Person {
+
+        @Builder
+        public Father(int idPerson, Integer dni, String name, String surnamePaternal, String surnameMaternal, int phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("mother")
+public class Mother extends Person {
+
+        @Builder
+        public Mother(int idPerson, Integer dni, String name, String surnamePaternal, String surnameMaternal, int phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("representative")
+public class Representative extends Person {
+
+        @Builder
+        public Representative(int idPerson, Integer dni, String name, String surnamePaternal, String surnameMaternal, int phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("student")
+public class Student extends Person {
+
+        @ManyToOne
+        @JoinColumn(name = "idFather")
+        private Father father;
+
+        @ManyToOne
+        @JoinColumn(name = "idMother")
+        private Mother mother;
+
+        @ManyToOne
+        @JoinColumn(name = "idRepresentative")
+        private Representative representative;
+
+        @ManyToOne
+        @JoinColumn(name = "idGrade")
+        private Grade grade;
+
+        @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<EnrollmentStudent> enrollmentStudents = new ArrayList<>();
+
+        @Builder
+        public Student(int idPerson, String dni, String name, String surnamePaternal, String surnameMaternal, String phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("teacher")
+public class Teacher extends Person {
+
+        @Builder
+        public Teacher(int idPerson, Integer dni, String name, String surnamePaternal, String surnameMaternal, int phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@DiscriminatorColumn(
+        name = "typePerson",
+        discriminatorType = DiscriminatorType.STRING,
+        length = 20
+)
+@Inheritance(
+        strategy = InheritanceType.SINGLE_TABLE
+)
+@Table(name = "person")
+public abstract class Person {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idPerson;
+
+        @Dni
+        @Column(name = "dni", nullable = false, unique = true, updatable = false, length = 8)
+        private String dni;
+
+        @Column(name = "name", nullable = false, length = 250)
+        private String name;
+
+        @Column(name = "surnamePaternal", nullable = false, length = 50)
+        private String surnamePaternal;
+
+        @Column(name = "surnameMaternal", nullable = false, length = 50)
+        private String surnameMaternal;
+
+        @Column(name = "phoneNumber", length = 15)
+        private String phoneNumber;
+
+        @ManyToOne
+        @JoinColumn(name = "idAccess", nullable = false, unique = true, updatable = false)
+        private Access access;
+
+        public String getTypePerson() {
+                if (this instanceof Student) {
+                        return "student";
+                } else if (this instanceof Teacher) {
+                        return "teacher";
+                } else if (this instanceof Assistant) {
+                        return "assistant";
+                } else if (this instanceof Director) {
+                        return "director";
+                } else if (this instanceof Father) {
+                        return "father";
+                } else if (this instanceof Mother) {
+                        return "mother";
+                } else if (this instanceof Representative) {
+                        return "representative";
+                } else {
+                        return "unknown";
+                }
+        }
+
+}

@@ -1,0 +1,194 @@
+@Setter
+@Getter
+@Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "enrollment")
+public class Enrollment {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idEnrollment;
+
+        @ManyToOne
+        @JoinColumn(name = "idSeason", nullable = false)
+        private Season season;
+
+        @ManyToOne
+        @JoinColumn(name = "idGrade", nullable = false)
+        private Grade grade;
+
+        @Column(name = "vacancies", nullable = false)
+        private int vacancies;
+
+        @Column(name = "enrolled", nullable = false)
+        private int enrolled;
+
+        @Column(name = "cost", nullable = false, precision = 6, scale = 2)
+        private BigDecimal cost;
+
+        @Column(name = "monthlyFee", nullable = false, precision = 6, scale = 2)
+        private BigDecimal monthlyFee;
+
+        @Column(name = "months", nullable = false)
+        private int months;
+
+        @Enumerated(EnumType.STRING)
+        @Column(name = "periodType", length = 20, nullable = false, columnDefinition = "VARCHAR(20)")
+        private TypePeriod typePeriod;
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
+        private final List<EnrollmentStudent> enrollmentStudents = new ArrayList<>();
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
+        private final List<CourseScheduled> courseScheduleds = new ArrayList<>();
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
+        private final List<EnrollmentPeriod> enrollmentPeriods = new ArrayList<>();
+
+}
+@Setter
+@Getter
+@Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "enrollmentStudent")
+public class EnrollmentStudent {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idEnrollmentStudent;
+
+        @ManyToOne
+        @JoinColumn(name = "idStudent", nullable = false)
+        private Student student;
+
+        @ManyToOne
+        @JoinColumn(name = "idEnrollment", nullable = false)
+        private Enrollment enrollment;
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "enrollmentStudent", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<Payment> payments = new ArrayList<>();
+}
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "payment")
+public class Payment {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idPayment;
+
+        @ManyToOne
+        @JoinColumn(name = "idEnrollmentStudent", nullable = false)
+        private EnrollmentStudent enrollmentStudent;
+
+        @ManyToOne
+        @JoinColumn(name = "idTypeStatus", nullable = false)
+        private TypeStatus typeStatus;
+
+        @Column(name = "pay", precision = 6, scale = 2)
+        private BigDecimal pay;
+
+        @Column(name = "description", length = 50)
+        private String description;
+
+}
+
+@Setter
+@Getter
+@Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "season")
+public class Season {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idSeason;
+
+        @Column(name = "startDate")
+        private Date startDate;
+
+        @Column(name = "year", nullable = false, updatable = false, unique = true)
+        private String year;
+
+}
+
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "typeStatus")
+public class TypeStatus {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idTypeStatus;
+
+        @Column(name = "name", nullable = false, length = 20, unique = true)
+        private String name;
+
+}
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "enrollmentPeriod")
+public class EnrollmentPeriod {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idEnrollmentPeriod;
+
+        @ManyToOne
+        @JoinColumn(name = "idEnrollment", nullable = false)
+        private Enrollment enrollment;
+
+        @ManyToOne
+        @JoinColumn(name = "idPeriod", nullable = false)
+        private Period period;
+
+        @Column(name = "visibilityDate")
+        private boolean visibilityDate;
+
+}
+@Setter
+ @Getter
+ @Builder
+ @Entity
+ @AllArgsConstructor
+ @NoArgsConstructor
+ @Table(name = "period")
+ public class Period {
+
+         @Id
+         @GeneratedValue(strategy = GenerationType.IDENTITY)
+         private int idPeriod;
+
+         @Column(name = "startDate", nullable = false)
+         private Date startDate;
+
+         @Column(name = "endDate", nullable = false)
+         private Date endtDate;
+
+         @JsonIgnore
+         @OneToMany(mappedBy = "period", cascade = CascadeType.ALL, orphanRemoval = true)
+         private final List<EnrollmentPeriod> enrollmentPeriods = new ArrayList<>();
+
+ }

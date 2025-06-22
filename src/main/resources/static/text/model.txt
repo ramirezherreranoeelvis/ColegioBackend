@@ -1,0 +1,1175 @@
+@Setter
+@Getter
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@DiscriminatorColumn(
+        name = "typeContentItem",
+        discriminatorType = DiscriminatorType.STRING,
+        length = 100
+)
+@Inheritance(
+        strategy = InheritanceType.SINGLE_TABLE
+)
+@Table(name = "contentItem")
+public abstract class ContentItem {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idContentItem;
+
+        @ManyToOne
+        @JoinColumn(name = "idPerson", nullable = false)
+        private Person person;
+
+        @ManyToOne
+        @JoinColumn(name = "idResource", nullable = false)
+        private Resource resource;
+
+        @Column(name = "content", nullable = false, columnDefinition = "LONGTEXT")
+        private String content;
+
+        @Column(name = "name", columnDefinition = "LONGTEXT")
+        private String name;
+
+        public String getType() {
+                if (this instanceof TeacherContentItem) {
+                        return "teacherContent";
+                } else if (this instanceof StudentContentItem) {
+                        return "studentContent";
+                } else {
+                        return "unknown";
+                }
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("studentContent")
+public class StudentContentItem extends ContentItem {
+
+        @Builder
+        public StudentContentItem(int idContentItem, Person person, Resource resource, String content, String name) {
+                super(idContentItem, person, resource, content, name);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("teacherContent")
+public class TeacherContentItem extends ContentItem{
+
+        @Builder
+        public TeacherContentItem(int idContentItem, Person person, Resource resource, String content, String name) {
+                super(idContentItem, person, resource, content, name);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("bimonthly_exam")
+public class BimonthlyExam  extends Activity {
+
+        @Builder
+        public BimonthlyExam (int idResource, Content content, String name, String description, Permission permission, Date createdAt, Date dueDate) {
+                super(idResource, content, name, description, permission, createdAt, dueDate);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("daily_exam")
+public class DailyExam extends Exam {
+
+        @Builder
+        public DailyExam(int idResource, Content content, String name, String description, Permission permission, Date createdAt, Date dueDate) {
+                super(idResource, content, name, description, permission, createdAt, dueDate);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("exam")
+public abstract class Exam extends Exam {
+
+        public Exam(int idResource, Content content, String name, String description, Permission permission, Date createdAt, Date dueDate) {
+                super(idResource, content, name, description, permission, createdAt, dueDate);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("monthly_exam")
+public class MonthlyExam extends Exam {
+
+        @Builder
+        public MonthlyExam(int idResource, Content content, String name, String description, Permission permission, Date createdAt, Date dueDate) {
+                super(idResource, content, name, description, permission, createdAt, dueDate);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("quarterly_exam")
+public class QuarterlyExam extends Exam {
+
+        @Builder
+        public QuarterlyExam(int idResource, Content content, String name, String description, Permission permission, Date createdAt, Date dueDate) {
+                super(idResource, content, name, description, permission, createdAt, dueDate);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("weekly_exam")
+public class WeeklyExam extends Exam {
+
+        @Builder
+        public WeeklyExam(int idResource, Content content, String name, String description, Permission permission, Date createdAt, Date dueDate) {
+                super(idResource, content, name, description, permission, createdAt, dueDate);
+        }
+
+}
+@Setter
+@Getter
+@NoArgsConstructor
+@Entity
+@DiscriminatorValue("activity")
+public abstract class Activity extends Resource {
+
+        @Column(name = "dueDate")
+        @Temporal(TemporalType.TIMESTAMP)
+        private Date dueDate;
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
+        private final List<GradeActivity> gradeActivity = new ArrayList<>();
+
+        public Activity(int idResource, Content content, String name, String description, Permission permission, Date createdAt, Date dueDate) {
+                super(idResource, content, name, description, permission, createdAt);
+                this.dueDate = dueDate;
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("forum")
+public class Forum extends Activity {
+
+        @Builder
+        public Forum(int idResource, Content content, String name, String description, Permission permission, Date createdAt, Date dueDate) {
+                super(idResource, content, name, description, permission, createdAt, dueDate);
+        }
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("homework")
+public class Homework extends Activity {
+
+        @Builder
+        public Homework(int idResource, Content content, String name, String description, Permission permission, Date createdAt, Date dueDate) {
+                super(idResource, content, name, description, permission, createdAt, dueDate);
+        }
+
+}
+
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("data")
+public class Data extends Resource {
+
+        @Builder
+        public Data(int idResource, Content content, String name, String description, Permission permission, Date createdAt) {
+                super(idResource, content, name, description, permission, createdAt);
+        }
+
+}
+@Setter
+@Getter
+@Builder
+@Entity
+@Table(name = "gradeActivity")
+public class GradeActivity {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idGradeActivity;
+
+        @Column(name = "grade", precision = 4, scale = 2, nullable = false)
+        private BigDecimal gradeValue;
+
+        @Column(name = "comments", length = 500)
+        private String comments;
+
+        @Column(name = "gradedAt")
+        @Temporal(TemporalType.TIMESTAMP)
+        private Date gradedAt;
+
+        @ManyToOne
+        @JoinColumn(name = "idActivity")
+        private Activity activity;
+
+        @ManyToOne
+        @JoinColumn(name = "idPerson", nullable = false)
+        private Person person;
+
+        @PrePersist
+        protected void onCreate() {
+                gradedAt = new Date();
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@DiscriminatorColumn(
+        name = "typeResource",
+        discriminatorType = DiscriminatorType.STRING,
+        length = 20
+)
+@Inheritance(
+        strategy = InheritanceType.SINGLE_TABLE
+)
+@Table(name = "resource")
+public abstract class Resource {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idResource;
+
+        @ManyToOne
+        @JoinColumn(name = "idContent", nullable = false)
+        private Content content;
+
+        @Column(name = "name", nullable = false, length = 100)
+        private String name;
+
+        @Column(name = "description", nullable = false, length = 300)
+        private String description;
+
+        @Enumerated(EnumType.STRING)
+        @Column(name = "permission", length = 10, nullable = false, columnDefinition = "VARCHAR(10)")
+        private Permission permission;
+
+        @Column(name = "createdAt")
+        @Temporal(TemporalType.TIMESTAMP)
+        private Date createdAt;
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
+        private final List<ContentItem> contentItems = new ArrayList<>();
+
+        public String getType() {
+                if (this instanceof Homework) {
+                        return "homework";
+                } else if (this instanceof Forum) {
+                        return "forum";
+                } else if (this instanceof Data) {
+                        return "data";
+                } else {
+                        return "unknown";
+                }
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("auxiliary")
+public class AuxiliaryContent extends Content {
+
+        @Builder
+        public AuxiliaryContent(int idContent, String name, int number, boolean isVisible, CourseScheduled courseScheduled) {
+                super(idContent, name, number, isVisible, courseScheduled);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@DiscriminatorColumn(
+        name = "typeContent",
+        discriminatorType = DiscriminatorType.STRING,
+        length = 100
+)
+@Inheritance(
+        strategy = InheritanceType.SINGLE_TABLE
+)
+@Table(name = "content")
+public abstract class Content {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idContent;
+
+        @Column(name = "name", nullable = true, length = 250)
+        private String name;
+
+        @Column(name = "number", nullable = false)
+        private int number;
+
+        @Column(name = "isVisible", nullable = false)
+        private boolean isVisible;
+
+        @ManyToOne
+        @JoinColumn(name = "idCourseScheduled", nullable = false)
+        private CourseScheduled courseScheduled;
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
+        private final List<Resource> resources = new ArrayList<>();
+
+        public String getType() {
+                if (this instanceof AuxiliaryContent) {
+                        return "auxiliary";
+                } else if (this instanceof ExtraContent) {
+                        return "extra";
+                } else if (this instanceof GeneralContent) {
+                        return "general";
+                } else if (this instanceof SessionContent) {
+                        return "session";
+                } else {
+                        return "unknown";
+                }
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("extra")
+public class ExtraContent extends Content {
+
+        @Builder
+        public ExtraContent(int idContent, String name, int number, boolean isVisible, CourseScheduled courseScheduled) {
+                super(idContent, name, number, isVisible, courseScheduled);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("general")
+public class GeneralContent extends Content {
+
+        @Builder
+        public GeneralContent(int idContent, String name, int number, boolean isVisible, CourseScheduled courseScheduled) {
+                super(idContent, name, number, isVisible, courseScheduled);
+        }
+
+}
+
+@Setter
+@Getter
+@Builder
+@Entity
+@Table(name = "sessionAttendance")
+public class SessionAttendance {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idAttendance;
+
+        @ManyToOne
+        @JoinColumn(name = "idPerson", nullable = false)
+        private Student student;
+
+        @ManyToOne
+        @JoinColumn(name = "idStatus", nullable = false)
+        private StatusAttendance status;
+
+        @ManyToOne
+        @JoinColumn(name = "idSession", nullable = false)
+        private SessionContent session;
+
+        @Column(name = "timeEntry", nullable = false)
+        @Temporal(TemporalType.TIMESTAMP)
+        private Date timeEntry;
+
+        @Column(name = "timeExit")
+        @Temporal(TemporalType.TIMESTAMP)
+        private Date timeExit;
+
+        @PrePersist
+        protected void onCreate() {
+                timeEntry = new Date();
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("session")
+public class SessionContent extends Content {
+
+        @Builder
+        public SessionContent(int idContent, String name, int number, boolean isVisible, CourseScheduled enrollment) {
+                super(idContent, name, number, isVisible, enrollment);
+        }
+
+}
+
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "classroom")
+public class Classroom {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idClassroom;
+
+        @Column(name = "number", nullable = false, unique = true)
+        private int number;
+
+        @Column(name = "floor", nullable = false)
+        private int floor;
+
+}
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "course")
+public class Course {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idCourse;
+
+        @Column(name = "name", nullable = false, length = 50, unique = true)
+        private String name;
+
+}
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "courseScheduled")
+public class CourseScheduled {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idCourseScheduled;
+
+        @Column(name = "code", length = 14, nullable = false, unique = true)
+        private String code;
+
+        @ManyToOne
+        @JoinColumn(name = "idClassroom", nullable = false)
+        private Classroom classroom;
+
+        @ManyToOne
+        @JoinColumn(name = "idCourse", nullable = false)
+        private Course course;
+
+        @ManyToOne
+        @JoinColumn(name = "idEnrollment", nullable = false)
+        private Enrollment enrollment;
+
+        @Column(name = "startTime", nullable = false)
+        private LocalTime startTime;
+
+        @Column(name = "endTime", nullable = false)
+        private LocalTime endTime;
+
+        @Enumerated(EnumType.STRING)
+        @Column(name = "day", length = 10, nullable = false, columnDefinition = "VARCHAR(10)")
+        private DayOfWeek dayOfWeek;
+
+        @Column(name = "portada", columnDefinition = "LONGTEXT")
+        private String portada;
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "courseScheduled", cascade = CascadeType.ALL, orphanRemoval = true)
+        private final List<TeacherCourseScheduled> teacherCourseScheduleds = new ArrayList<>();
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "courseScheduled", cascade = CascadeType.ALL, orphanRemoval = true)
+        private final List<Content> contents = new ArrayList<>();
+}
+
+@Setter
+@Getter
+@Builder
+@Entity
+@Table(name = "statusAttendance")
+public class StatusAttendance {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idStatus;
+
+        @Column(name = "name", nullable = false, length = 20)
+        private String name;
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "status", cascade = CascadeType.ALL, orphanRemoval = true)
+        private final List<SessionAttendance> sessionAttendances = new ArrayList<>();
+
+
+}
+
+@Setter
+@Getter
+@Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "enrollment")
+public class Enrollment {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idEnrollment;
+
+        @ManyToOne
+        @JoinColumn(name = "idSeason", nullable = false)
+        private Season season;
+
+        @ManyToOne
+        @JoinColumn(name = "idGrade", nullable = false)
+        private Grade grade;
+
+        @Column(name = "vacancies", nullable = false)
+        private int vacancies;
+
+        @Column(name = "enrolled", nullable = false)
+        private int enrolled;
+
+        @Column(name = "cost", nullable = false, precision = 6, scale = 2)
+        private BigDecimal cost;
+
+        @Column(name = "monthlyFee", nullable = false, precision = 6, scale = 2)
+        private BigDecimal monthlyFee;
+
+        @Column(name = "months", nullable = false)
+        private int months;
+
+        @Enumerated(EnumType.STRING)
+        @Column(name = "periodType", length = 20, nullable = false, columnDefinition = "VARCHAR(20)")
+        private TypePeriod typePeriod;
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
+        private final List<EnrollmentStudent> enrollmentStudents = new ArrayList<>();
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
+        private final List<CourseScheduled> courseScheduleds = new ArrayList<>();
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
+        private final List<EnrollmentPeriod> enrollmentPeriods = new ArrayList<>();
+
+}
+@Setter
+@Getter
+@Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "enrollmentStudent")
+public class EnrollmentStudent {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idEnrollmentStudent;
+
+        @ManyToOne
+        @JoinColumn(name = "idStudent", nullable = false)
+        private Student student;
+
+        @ManyToOne
+        @JoinColumn(name = "idEnrollment", nullable = false)
+        private Enrollment enrollment;
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "enrollmentStudent", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<Payment> payments = new ArrayList<>();
+}
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "payment")
+public class Payment {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idPayment;
+
+        @ManyToOne
+        @JoinColumn(name = "idEnrollmentStudent", nullable = false)
+        private EnrollmentStudent enrollmentStudent;
+
+        @ManyToOne
+        @JoinColumn(name = "idTypeStatus", nullable = false)
+        private TypeStatus typeStatus;
+
+        @Column(name = "pay", precision = 6, scale = 2)
+        private BigDecimal pay;
+
+        @Column(name = "description", length = 50)
+        private String description;
+
+}
+
+@Setter
+@Getter
+@Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "season")
+public class Season {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idSeason;
+
+        @Column(name = "startDate")
+        private Date startDate;
+
+        @Column(name = "year", nullable = false, updatable = false, unique = true)
+        private String year;
+
+}
+
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "typeStatus")
+public class TypeStatus {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idTypeStatus;
+
+        @Column(name = "name", nullable = false, length = 20, unique = true)
+        private String name;
+
+}
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "enrollmentPeriod")
+public class EnrollmentPeriod {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idEnrollmentPeriod;
+
+        @ManyToOne
+        @JoinColumn(name = "idEnrollment", nullable = false)
+        private Enrollment enrollment;
+
+        @ManyToOne
+        @JoinColumn(name = "idPeriod", nullable = false)
+        private Period period;
+
+        @Column(name = "visibilityDate")
+        private boolean visibilityDate;
+
+}
+@Setter
+ @Getter
+ @Builder
+ @Entity
+ @AllArgsConstructor
+ @NoArgsConstructor
+ @Table(name = "period")
+ public class Period {
+
+         @Id
+         @GeneratedValue(strategy = GenerationType.IDENTITY)
+         private int idPeriod;
+
+         @Column(name = "startDate", nullable = false)
+         private Date startDate;
+
+         @Column(name = "endDate", nullable = false)
+         private Date endtDate;
+
+         @JsonIgnore
+         @OneToMany(mappedBy = "period", cascade = CascadeType.ALL, orphanRemoval = true)
+         private final List<EnrollmentPeriod> enrollmentPeriods = new ArrayList<>();
+
+ }
+
+@Setter
+@Getter
+@Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "enrollmentStudent")
+public class EnrollmentStudent {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idEnrollmentStudent;
+
+        @ManyToOne
+        @JoinColumn(name = "idStudent", nullable = false)
+        private Student student;
+
+        @ManyToOne
+        @JoinColumn(name = "idEnrollment", nullable = false)
+        private Enrollment enrollment;
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "enrollmentStudent", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<Payment> payments = new ArrayList<>();
+}
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "payment")
+public class Payment {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idPayment;
+
+        @ManyToOne
+        @JoinColumn(name = "idEnrollmentStudent", nullable = false)
+        private EnrollmentStudent enrollmentStudent;
+
+        @ManyToOne
+        @JoinColumn(name = "idTypeStatus", nullable = false)
+        private TypeStatus typeStatus;
+
+        @Column(name = "pay", precision = 6, scale = 2)
+        private BigDecimal pay;
+
+        @Column(name = "description", length = 50)
+        private String description;
+
+}
+
+@Setter
+@Getter
+@Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "season")
+public class Season {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idSeason;
+
+        @Column(name = "startDate")
+        private Date startDate;
+
+        @Column(name = "year", nullable = false, updatable = false, unique = true)
+        private String year;
+
+}
+
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "typeStatus")
+public class TypeStatus {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idTypeStatus;
+
+        @Column(name = "name", nullable = false, length = 20, unique = true)
+        private String name;
+
+}
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Entity
+@Table(name = "entrySchool")
+public class EntrySchool{
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idEntrySchool;
+
+        @ManyToOne
+        @JoinColumn(name = "idPerson", nullable = false, updatable = false)
+        private Student student;
+
+        @Column(name = "timeEntry")
+        @Temporal(TemporalType.TIMESTAMP)
+        private Date timeEntry;
+
+        @Column(name = "timeExit")
+        @Temporal(TemporalType.TIMESTAMP)
+        private Date timeExit;
+
+        @PrePersist
+        protected void onCreate() {
+                timeEntry = new Date();
+        }
+
+}
+@Setter
+@Getter
+@Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "grade")
+public class Grade {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idGrade;
+
+        @Column(name = "name", nullable = false, unique = true, length = 30)
+        private String name;
+
+        @ManyToOne
+        @JoinColumn(name = "idNextGrade")
+        private Grade nextGrade;
+
+        @ManyToOne
+        @JoinColumn(name = "idPreviousGrade")
+        private Grade previousGrade;
+
+}
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "teacherCourseScheduled")
+public class TeacherCourseScheduled {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idTeacherCourseScheduled;
+
+        @ManyToOne
+        @JoinColumn(name = "idTeacher", nullable = false)
+        private Teacher teacher;
+
+        @ManyToOne
+        @JoinColumn(name = "idCourseScheduled", nullable = false)
+        private CourseScheduled courseScheduled;
+
+        @Column(name = "salary", nullable = false, precision = 6, scale = 2)
+        private BigDecimal salary;
+
+}
+
+@Setter
+@Getter
+@Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "access", indexes = {
+        @Index(name = "idx_username_password", columnList = "username, password")
+})
+public class Access {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idAccess;
+
+        @Column(name = "access", nullable = false)
+        private boolean accessEnabled;
+
+        @Column(name = "username", nullable = false, unique = true, updatable = true, length = 20)
+        private String username;
+
+        @Column(name = "password", nullable = false, length = 20)
+        private String password;
+
+        @Column(name = "description", length = 150)
+        private String description;
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("assistant")
+public class Assistant extends Person {
+
+        @Builder
+        public Assistant(int idPerson, Integer dni, String name, String surnamePaternal, String surnameMaternal, int phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("director")
+public class Director extends Person {
+
+        @Builder
+        public Director(int idPerson, Integer dni, String name, String surnamePaternal, String surnameMaternal, int phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("father")
+public class Father extends Person {
+
+        @Builder
+        public Father(int idPerson, Integer dni, String name, String surnamePaternal, String surnameMaternal, int phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("mother")
+public class Mother extends Person {
+
+        @Builder
+        public Mother(int idPerson, Integer dni, String name, String surnamePaternal, String surnameMaternal, int phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("representative")
+public class Representative extends Person {
+
+        @Builder
+        public Representative(int idPerson, Integer dni, String name, String surnamePaternal, String surnameMaternal, int phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("student")
+public class Student extends Person {
+
+        @ManyToOne
+        @JoinColumn(name = "idFather")
+        private Father father;
+
+        @ManyToOne
+        @JoinColumn(name = "idMother")
+        private Mother mother;
+
+        @ManyToOne
+        @JoinColumn(name = "idRepresentative")
+        private Representative representative;
+
+        @ManyToOne
+        @JoinColumn(name = "idGrade")
+        private Grade grade;
+
+        @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<EnrollmentStudent> enrollmentStudents = new ArrayList<>();
+
+        @Builder
+        public Student(int idPerson, String dni, String name, String surnamePaternal, String surnameMaternal, String phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("teacher")
+public class Teacher extends Person {
+
+        @Builder
+        public Teacher(int idPerson, Integer dni, String name, String surnamePaternal, String surnameMaternal, int phoneNumber, Access access) {
+                super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
+        }
+
+}
+@Setter
+@Getter
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@DiscriminatorColumn(
+        name = "typePerson",
+        discriminatorType = DiscriminatorType.STRING,
+        length = 20
+)
+@Inheritance(
+        strategy = InheritanceType.SINGLE_TABLE
+)
+@Table(name = "person")
+public abstract class Person {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int idPerson;
+
+        @Dni
+        @Column(name = "dni", nullable = false, unique = true, updatable = false, length = 8)
+        private String dni;
+
+        @Column(name = "name", nullable = false, length = 250)
+        private String name;
+
+        @Column(name = "surnamePaternal", nullable = false, length = 50)
+        private String surnamePaternal;
+
+        @Column(name = "surnameMaternal", nullable = false, length = 50)
+        private String surnameMaternal;
+
+        @Column(name = "phoneNumber", length = 15)
+        private String phoneNumber;
+
+        @ManyToOne
+        @JoinColumn(name = "idAccess", nullable = false, unique = true, updatable = false)
+        private Access access;
+
+        public String getTypePerson() {
+                if (this instanceof Student) {
+                        return "student";
+                } else if (this instanceof Teacher) {
+                        return "teacher";
+                } else if (this instanceof Assistant) {
+                        return "assistant";
+                } else if (this instanceof Director) {
+                        return "director";
+                } else if (this instanceof Father) {
+                        return "father";
+                } else if (this instanceof Mother) {
+                        return "mother";
+                } else if (this instanceof Representative) {
+                        return "representative";
+                } else {
+                        return "unknown";
+                }
+        }
+
+}
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+@Setter
+@Getter
+@Builder
+@Entity
+@Table(name = "report")
+public class Report {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Integer idReport;
+
+        @ManyToOne
+        @JoinColumn(name = "idAssistant", nullable = false)
+        private Assistant assistant;
+
+        @Column(name = "description", nullable = false, length = 300)
+        private String description;
+
+        @Column(name = "dateReport", nullable = false, updatable = false)
+        @Temporal(TemporalType.TIMESTAMP)
+        private Date dateReport;
+
+        @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<ReportPerson> reportPersons = new ArrayList<>();
+
+        @PrePersist
+        protected void onCreate() {
+                dateReport = new Date();
+        }
+
+
+}
+@Setter
+@Getter
+@Builder
+@Entity
+@Table(name = "reportPerson")
+public class ReportPerson {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Integer idReportPerson;
+
+        @ManyToOne
+        @JoinColumn(name = "idPerson", nullable = false)
+        private Person person;
+
+        @ManyToOne
+        @JoinColumn(name = "idReport", nullable = false)
+        private Report report;
+
+}
