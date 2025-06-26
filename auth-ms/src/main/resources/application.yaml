@@ -1,9 +1,9 @@
 spring:
   application:
-    name: xd
+    name: auth-ms-colegio
   r2dbc:
-    url: r2dbc:mysql://localhost:3308/auth
-    username: root
-    password: "@%@?@R(0)s3!2e45b%B9Og@T(0)w(0)Nt3s@!@@?"
+    url: r2dbc:mysql://localhost:3390/auth
+    username: root-auth
+    password: 12345
 server:
-  port: 8082
+  port: 8080
