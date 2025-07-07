@@ -1,4 +1,4 @@
-package com.uguimar.authms.domain.exception;
+package com.authms.domain.exception;
 
 public class InvalidTokenException extends RuntimeException {
     public InvalidTokenException(String message) {

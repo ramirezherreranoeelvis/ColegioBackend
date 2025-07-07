@@ -7,3 +7,7 @@ spring:
     password: 12345
 server:
   port: 8080
+
+security:
+  password:
+    default: 10002000

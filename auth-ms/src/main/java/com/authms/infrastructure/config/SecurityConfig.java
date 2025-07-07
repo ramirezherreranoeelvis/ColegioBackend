@@ -30,6 +30,7 @@ public class SecurityConfig {
                   .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                   .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/api/auth/login").permitAll()
+                        .pathMatchers("/api/auth/register").permitAll()
                         .anyExchange().authenticated()
                   )
                   .build();

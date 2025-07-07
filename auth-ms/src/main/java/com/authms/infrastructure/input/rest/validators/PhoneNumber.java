@@ -8,15 +8,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = DniValidator.class)
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Constraint(validatedBy = PhoneValidator.class)
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Dni {
+public @interface PhoneNumber {
 
-        String message() default "DNI must be exactly 8 digits";
+        String message() default "Número de teléfono inválido";
+
+        boolean notNull() default false;
 
         Class<?>[] groups() default {};
 
         Class<? extends Payload>[] payload() default {};
 
 }
+

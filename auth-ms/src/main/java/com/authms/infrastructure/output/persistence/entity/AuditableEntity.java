@@ -1,4 +1,4 @@
-package com.uguimar.authms.infrastructure.output.persistence.entity;
+package com.authms.infrastructure.output.persistence.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,19 +17,21 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuditableEntity {
-    @CreatedBy
-    @Column("created_by")
-    private String createdBy;
 
-    @CreatedDate
-    @Column("created_date")
-    private Instant createdDate;
+      @CreatedBy
+      @Column("created_by")
+      private String createdBy;
 
-    @LastModifiedBy
-    @Column("last_modified_by")
-    private String lastModifiedBy;
+      @CreatedDate
+      @Column("created_date")
+      private Instant createdDate;
 
-    @LastModifiedDate
-    @Column("last_modified_date")
-    private Instant lastModifiedDate;
+      @LastModifiedBy
+      @Column("last_modified_by")
+      private String lastModifiedBy;
+
+      @LastModifiedDate
+      @Column("last_modified_date")
+      private Instant lastModifiedDate;
+
 }

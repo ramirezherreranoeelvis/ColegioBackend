@@ -1,4 +1,4 @@
-package com.uguimar.authms.domain.model;
+package com.authms.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,13 +12,8 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Token {
-    private String id;
-    private String userId;
-    private String value;
-    private Instant expiryDate;
-    private TokenType type;
-
-    public boolean isExpired() {
-        return expiryDate != null && expiryDate.isBefore(Instant.now());
-    }
+      private String id;
+      private String usrId;
+      private String value;
+      private Instant expiryDate;
 }

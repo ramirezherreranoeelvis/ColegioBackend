@@ -1,4 +1,10 @@
-package com.authms.application.port.input.authentication;
+package com.authms.application.port.input;
 
-public interface refreshToken {
+import com.authms.domain.Token;
+import reactor.core.publisher.Mono;
+
+public interface RefreshTokenUseCase {
+
+      Mono<Token> refreshToken(String refreshToken);
+
 }

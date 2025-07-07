@@ -1,4 +1,4 @@
-package com.uguimar.authms.domain.exception;
+package com.authms.domain.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {

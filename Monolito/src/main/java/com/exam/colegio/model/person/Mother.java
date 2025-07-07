@@ -27,5 +27,4 @@ public class Mother extends Person {
                 super(idPerson, dni, name, surnamePaternal, surnameMaternal, phoneNumber, access);
         }
 
-
 }

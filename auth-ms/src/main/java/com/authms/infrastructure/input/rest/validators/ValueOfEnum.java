@@ -8,16 +8,21 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = ValueOfEnumValidator.class)
-public @interface Enum {
+@Constraint(validatedBy = {
+      com.authms.validators.ValueOfEnumStringValidator.class,
+      ValueOfEnumValidator.class
+})
+public @interface ValueOfEnum {
 
-      /** Enum that defines the accepted values. */
       Class<? extends Enum<?>> enumClass();   // ← aquí va el <? extends Enum<?>>
 
       String message() default "Invalid value";
+
       Class<?>[] groups() default {};
+
       Class<? extends Payload>[] payload() default {};
+
 }
 
